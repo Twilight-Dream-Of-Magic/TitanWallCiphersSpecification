@@ -13,20 +13,30 @@ Additionally, practical code implementations further demonstrate its applicabili
 
 ## **1.Byte Substitution Box Generation**
 
-**Multiplication in \(GF(2^8)\)**:
+**Multiplication in $` GF(2^8) `$**:
 
-Given two polynomials \(a(x)\) and \(b(x)\) in \(GF(2^8)\), their product is:
-\[ c(x) = a(x) \times b(x) \]
-To ensure the result remains within \(GF(2^8)\), we use:
-\[ c'(x) = c(x) \mod m(x) \]
-And, since we're in \(GF(2)\), coefficients are either 0 or 1:
-\[ c''(x) = c'(x) \mod 2 \]
+Given two polynomials $` a(x) `$ and $` b(x) `$ in $` GF(2^8) `$, their product is:
+```math
+c(x) = a(x) \times b(x)
+```
+To ensure the result remains within $` GF(2^8) `$, we use:
+```math
+c'(x) = c(x) \mod m(x)
+```
+And, since we're in $` GF(2) `$, coefficients are either 0 or 1:
+```math
+c''(x) = c'(x) \mod 2
+```
 
-**Multiplicative Inverse in \(GF(2^8)\)**:
+**Multiplicative Inverse in $` GF(2^8) `$**:
 
-The multiplicative inverse of a polynomial \(a(x)\) in \(GF(2^8)\) is found using the Extended Euclidean Algorithm. The goal is:
-\[ a(x) \times x(x) + m(x) \times y(x) = 1 \]
-Here, \(x(x)\) is the multiplicative inverse of \(a(x)\) in \(GF(2^8)\).
+The multiplicative inverse of a polynomial $` a(x) `$ in $` GF(2^8) `$ is found using the Extended Euclidean Algorithm. 
+
+The goal is:
+```math
+a(x) \times x(x) + m(x) \times y(x) = 1
+```
+Here, $` x(x) `$ is the multiplicative inverse of $` a(x) `$ in $` GF(2^8) `$.
 
 ### **1.1 Definitions Substitution Box A**:
 
@@ -85,18 +95,18 @@ Thus, we openly acknowledge our limitations in retrieving the foundational gener
 It's imperative to draw a clear demarcation between the 'cryptographic attribute parameters that were subjected to analysis for Substitution Box A' and the 'parameters intrinsically employed in the construction of Substitution Box A'. 
 The two, while closely related, bear distinct connotations and implications in this scholarly discourse.
 
-1. **Field**: Operations are performed in the Galois Field \(GF(2^8)\).
-2. **Modulus Polynomial**: \(m(x) = x^8 + x^5 + x^4 + x^3 + x^2 + x + 1\). The value `0x13F` : This must be an irreducible polynomial.
-3. **Forward Seed Polynomial**: \(poly_{forward}(x) = x^7 + x^5 + x^4 + x^3 + x^2 + x + 1\).
-4. **Backward Seed Polynomial**: \(poly_{backward}(x) = x^7 + x^6 + x^5 + x^3 + x + 1\).
+1. **Field**: Operations are performed in the Galois Field $`GF(2^8)`$.
+2. **Modulus Polynomial**: $`m(x) = x^8 + x^5 + x^4 + x^3 + x^2 + x + 1`$. The value `0x13F` : This must be an irreducible polynomial.
+3. **Forward Seed Polynomial**: $`poly_{forward}(x) = x^7 + x^5 + x^4 + x^3 + x^2 + x + 1`$.
+4. **Backward Seed Polynomial**: $`poly_{backward}(x) = x^7 + x^6 + x^5 + x^3 + x + 1`$.
 5. **Fixed Bytes**: `ByteForwardFixed = 0xE2` and `ByteBackwardFixed = 0xB8`.
 
-### Generated binary transformation matrix \(GF(2^8)\):
+### Generated binary transformation matrix $`GF(2^8)`$:
 
-\( TransformationMatrix_{forward} = \text{init\_byte\_transform\_matrix}(poly_{backward}) \)
-\( TransformationMatrix_{backward} = \text{init\_byte\_transform\_matrix}(poly_{forward}) \)
+$` TransformationMatrix_{forward} = \text{init\_byte\_transform\_matrix}(poly_{backward}) `$
+$` TransformationMatrix_{backward} = \text{init\_byte\_transform\_matrix}(poly_{forward}) `$
 
-\[
+```math 
 TransformationMatrix_{forward} = 
 \begin{bmatrix}
 1 & 1 & 1 & 1 & 1 & 1 & 0 & 1 \\
@@ -108,9 +118,9 @@ TransformationMatrix_{forward} =
 1 & 1 & 1 & 1 & 0 & 1 & 1 & 1 \\
 1 & 1 & 1 & 1 & 1 & 0 & 1 & 1 \\
 \end{bmatrix}
-\]
+```
 
-\[
+```math 
 TransformationMatrix_{backward} = 
 \begin{bmatrix}
 1 & 1 & 0 & 1 & 1 & 1 & 1 & 1 \\
@@ -122,27 +132,35 @@ TransformationMatrix_{backward} =
 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
 1 & 0 & 1 & 1 & 1 & 1 & 1 & 1 \\
 \end{bmatrix}
-\]
+```
 
 **Algebraic Formulation**
 For the forward Substitution-box:
-\[ \text{Substitution-box}[byte] = byte\left(TransformationMatrix_{backward} \times binaryvector( byte^{-1}_{\pmod{m(x)}} ) \oplus ByteForwardFixed \right) \]
+```math
+\text{Substitution-box}[byte] = byte\left(TransformationMatrix_{backward} \times binaryvector( byte^{-1}_{\pmod{m(x)}} ) \oplus ByteForwardFixed \right)
+```
 
 For the backward Substitution-box:
-\[ \text{Substitution-box}^{-1}[byte] = byte\left((TransformationMatrix_{forward} \times binaryvector(byte) \oplus ByteBackwardFixed )^{-1}_{\pmod{m(x)}}\right) \]
+```math
+\text{Substitution-box}^{-1}[byte] = byte\left((TransformationMatrix_{forward} \times binaryvector(byte) \oplus ByteBackwardFixed )^{-1}_{\pmod{m(x)}}\right)
+```
 
 ByteForwardFixed: `0xE2`
 ByteBackwardFixed: `0xB8`
 
 The forward fixed polynomial byte value and the reverse fixed polynomial byte value should satisfy the following relationship:
 
-\[ TransformationMatrix_{forward} \times_{\pmod{m(x)}} ByteForwardFixed = ByteBackwardFixed \]
-\[ TransformationMatrix_{backward} \times_{\pmod{m(x)}} ByteBackwardFixed = ByteForwardFixed \]
+```math
+TransformationMatrix_{forward} \times_{\pmod{m(x)}} ByteForwardFixed = ByteBackwardFixed
+```
+```math
+TransformationMatrix_{backward} \times_{\pmod{m(x)}} ByteBackwardFixed = ByteForwardFixed
+```
 
 Where:
-- \( byte^{-1}_{\pmod{m(x)}} \) is the multiplicative inverse of \(byte\) in \(GF(2^8)\) with respect to \(m(x)\).
-- \( TransformationMatrix_{forward} \) is the transformation matrix constructed from \(poly_{forward}(x)\).
-- \( TransformationMatrix_{backward} \) is the transformation matrix constructed from \(poly_{backward}(x)\).
+- $` byte^{-1}_{\pmod{m(x)}} `$ is the multiplicative inverse of $`byte`$ in $`GF(2^8)`$ with respect to $`m(x)`$.
+- $` TransformationMatrix_{forward} `$ is the transformation matrix constructed from $`poly_{forward}(x)`$.
+- $` TransformationMatrix_{backward} `$ is the transformation matrix constructed from $`poly_{backward}(x)`$.
 
 **Python Implementation**:
 
@@ -535,10 +553,10 @@ Press ENTER to exit console.
 
 ### **1.4 Substitution Box B Generation**:
 
-1. **Field**: Operations are performed in the Galois Field \(GF(2^8)\).
-2. **Modulus Polynomial**: \(m(x) = x^8 + x^7 + x^6 + x^5 + x^4 + x^3 + 1\). The value `0x1F9` : This polynomial is irreducible in \(GF(2^8)\).
+1. **Field**: Operations are performed in the Galois Field $`GF(2^8)`$.
+2. **Modulus Polynomial**: $`m(x) = x^8 + x^7 + x^6 + x^5 + x^4 + x^3 + 1`$. The value `0x1F9` : This polynomial is irreducible in $`GF(2^8)`$.
 3. **Transformation Matrix**:
-\[ 
+```math
 TransformationMatrix = 
 \begin{bmatrix}
 1 & 1 & 1 & 1 & 1 & 1 & 0 & 0 \\
@@ -550,17 +568,19 @@ TransformationMatrix =
 1 & 1 & 0 & 1 & 1 & 1 & 1 & 1 \\
 1 & 1 & 1 & 0 & 1 & 1 & 1 & 1 \\
 \end{bmatrix}
-\]
+```
 **Fixed Byte**: `ByteFixed = 0xE2`.
 
 **Algebraic Formulation**
 For Substitution Box B:
-\[ \text{S-box}[byte] = byte\left(TransformationMatrix \times binaryvector( byte^{-1}_{\pmod{m(x)}} ) \oplus ByteFixed \right) \]
+```math
+\text{S-box}[byte] = byte\left(TransformationMatrix \times binaryvector( byte^{-1}_{\pmod{m(x)}} ) \oplus ByteFixed \right)
+```
 
 Where:
-- \( byte^{-1}_{\pmod{m(x)}} \) is the multiplicative inverse of \(byte\) in \(GF(2^8)\) with respect to \(m(x)\).
-- \( TransformationMatrix \) is the matrix used for the affine transformation.
-- \( \oplus \) represents the bitwise XOR operation.
+- $` byte^{-1}_{\pmod{m(x)}} `$ is the multiplicative inverse of $`byte`$ in $`GF(2^8)`$ with respect to $`m(x)`$.
+- $` TransformationMatrix `$ is the matrix used for the affine transformation.
+- $` \oplus `$ represents the bitwise XOR operation.
 
 The combination of multiplicative inversion and affine transformation ensures the non-linearity of the S-box, which is crucial for cryptographic strength.
 
@@ -750,51 +770,51 @@ Class CryptographicFunctions:
 EndClass
 ```
 
-Where \( KDSB[number] = KDSB_{index} \)
+Where $` KDSB[number] = KDSB_{index} `$
 
 ### 2.1. Bitwise Rotation
 
 Left Rotation:
-\[
+```math 
 \text{{Bits32RotateLeft}}(number, bit) = (number \ll (bit \mod 32)) \lor (number \gg (32 - (bit \mod 32)))
-\]
+```
 
 Right Rotation:
-\[
+```math 
 \text{{Bits32RotateRight}}(number, bit) = (number \gg (bit \mod 32)) \lor (number \ll (32 - (bit \mod 32)))
-\]
+```
 
-Where \(\ll\) denotes left bitwise shift, \(\gg\) denotes right bitwise shift, \(\lll\) denotes left bitwise rotate, \(\ggg\) denotes right bitwise rotate, and \(\lor\) denotes bitwise OR.
+Where $`\ll`$ denotes left bitwise shift, $`\gg`$ denotes right bitwise shift, $`\lll`$ denotes left bitwise rotate, $`\ggg`$ denotes right bitwise rotate, and $`\lor`$ denotes bitwise OR.
 
 ### 2.2. Nonlinear Boolean Function
 
-\[
+```math 
 \text{{FF}}(A, B, C, Index, ArraySize) = 
 \begin{cases} 
 A \oplus B \oplus C & \text{{if }} Index < \frac{3 \times ArraySize}{4} \\
 (A \land B) \lor (A \land C) \lor (B \land C) & \text{{otherwise}}
 \end{cases}
-\]
+```
 
-\[
+```math 
 \text{{GG}}(A, B, C, Index, ArraySize) = 
 \begin{cases} 
 A \oplus B \oplus C & \text{{if }} Index < \frac{3 \times ArraySize}{4} \\
 (A \land B) \lor (\neg A \land C) & \text{{otherwise}}
 \end{cases}
-\]
+```
 
-Where \(\oplus\) denotes bitwise XOR, \(\land\) denotes bitwise AND, and \(\lor\) denotes bitwise OR, \(\lnot\) denotes bitwise NOT.
+Where $`\oplus`$ denotes bitwise XOR, $`\land`$ denotes bitwise AND, and $`\lor`$ denotes bitwise OR, $`\lnot`$ denotes bitwise NOT.
 
 ### 2.3. Linear Transform Function
 
-\[
+```math 
 L(number) = number \oplus (number \lll 2) \oplus (number \lll 10) \oplus (number \lll 18) \oplus (number \lll 24)
-\]
+```
 
-\[
+```math 
 L2(number) = number \oplus (number \lll 13) \oplus (number \lll 23)
-\]
+```
 
 ### 2.4. NLFSR (Non-Linear Feedback Shift Register)
 
@@ -803,14 +823,14 @@ The exact operations are inspired by the KeeLoq algorithm and involve combinatio
 
 **Feedback Function Definitions with Boolean Algebra**:
 
-- \( \text{FeedBack0} = (B \oplus G) \oplus (A \oplus F) \)
-- \( \text{FeedBack1} = (A \land D) \oplus (A \land G) \)
-- \( \text{FeedBack2} = (B \land C) \oplus (B \land D) \oplus (B \land E) \)
-- \( \text{FeedBack3} = (E \land F) \land (D \land F) \land (C \land F) \)
-- \( \text{FeedBack4} = (F \land G) \land (E \land G) \land (D \land G) \)
-- \( \text{FeedBack5} = (A \land B \land G) \oplus (A \land D \land G) \oplus (A \land F \land G) \)
-- \( \text{FeedBack6} = (A \land B \land C) \oplus (B \land C \land D) \oplus (C \land D \land E) \oplus (D \land E \land F) \oplus (E \land F \land G) \)
-- \( \text{FeedBack7} = (A \land C \land E \land G) \oplus (B \land D \land F) \)
+- $` \text{FeedBack0} = (B \oplus G) \oplus (A \oplus F) `$
+- $` \text{FeedBack1} = (A \land D) \oplus (A \land G) `$
+- $` \text{FeedBack2} = (B \land C) \oplus (B \land D) \oplus (B \land E) `$
+- $` \text{FeedBack3} = (E \land F) \land (D \land F) \land (C \land F) `$
+- $` \text{FeedBack4} = (F \land G) \land (E \land G) \land (D \land G) `$
+- $` \text{FeedBack5} = (A \land B \land G) \oplus (A \land D \land G) \oplus (A \land F \land G) `$
+- $` \text{FeedBack6} = (A \land B \land C) \oplus (B \land C \land D) \oplus (C \land D \land E) \oplus (D \land E \land F) \oplus (E \land F \land G) `$
+- $` \text{FeedBack7} = (A \land C \land E \land G) \oplus (B \land D \land F) `$
 
 **Algorithm**:
 ```
@@ -861,18 +881,18 @@ EndFunction
 ### 2.5 MixWithAddSubtract
 
 **Mathematical Formulas**:
-\[
+```math 
 \text{RandomIndex} = \text{RandomIndex} \newline \oplus \left( \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] + \text{MathMagicNumbers}[\text{Counter} \mod 4] \right)
-\]
-\[
+```
+```math 
 \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \newline + \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \\ - \text{MathMagicNumbers}[(\text{RandomIndex} + \text{Counter}) \mod 4]
-\]
-\[
+```
+```math 
 \text{RandomIndex} = \text{RandomIndex} \newline \oplus \left( \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \newline + \text{MathMagicNumbers}[(\text{RandomIndex} - \text{Counter}) \pmod{4}] \right)
-\]
-\[
+```
+```math 
 \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] = \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \newline - \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \\ + \text{MathMagicNumbers}[(\text{RandomIndex} + \text{Counter}) \mod 4]
-\]
+```
 
 **Algorithm**:
 ```
@@ -887,15 +907,15 @@ EndFunction
 ### 2.6 RandomAccessMix
 
 **Mathematical Formulas**:
-\[
+```math 
 \text{{RandomPosition}} = \text{RandomIndex} \pmod{\text{KDSB.size()}}
-\]
-\[
+```
+```math 
 \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \oplus \text{KDSB}[\text{{RandomPosition}}]
-\]
-\[
+```
+```math 
 \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \newline + \left( \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] - \text{MathMagicNumbers}[\text{{RandomPosition}} \mod 4] \right)
-\]
+```
 
 **Algorithm**:
 ```
@@ -910,52 +930,52 @@ EndFunction
 
 **Mathematical Formulas**:
 1. Splitting and Processing `RandomIndex`:
-   Let \( RL \) and \( RR \) be the left and right 32 bits of `RandomIndex` respectively.
-   \[
+   Let $` RL `$ and $` RR `$ be the left and right 32 bits of `RandomIndex` respectively.
+   ```math 
    RL = 32Bit(RandomIndex \gg 32)
-   \]
-   \[
+   ```
+   ```math 
    RR = 32Bit(RandomIndex \land 0x00000000FFFFFFFF)
-   \]
+   ```
    Apply the NLFSR transformation:
-   \[
+   ```math 
    RL' = \text{{NLFSR}}(RL)
-   \]
-   \[
+   ```
+   ```math 
    RR' = \text{{NLFSR}}(RR)
-   \]
-   Combine \( RL' \) and \( RR' \) to form the new `RandomIndex`:
-   \[
+   ```
+   Combine $` RL' `$ and $` RR' `$ to form the new `RandomIndex`:
+   ```math 
    RandomIndex' = (64Bit(RR') \ll 32) \lor 64Bit(RL')
-   \]
+   ```
 
 2. Updating `KDSB` using Previous Entries:
-   \[
+   ```math 
    KDSB[Counter \mod N] = KDSB[Counter \mod N] \newline \oplus KDSB[(Counter - 2) \mod N] \oplus KDSB[(Counter - 1) \mod N]
-   \]
-   where \( N \) is the size of `KDSB`.
+   ```
+   where $` N `$ is the size of `KDSB`.
 
 3. Applying the Nonlinear Boolean Functions and Linear Transformation:
-   \[
+   ```math 
    KDSB[Counter \mod N] = KDSB[Counter \mod N] \newline + GG(Counter, KDSB[(Counter - 1) \mod N], RandomIndex' \mod 2^{32}, Counter, N)
-   \]
-   \[
+   ```
+   ```math 
    KDSB[Counter \mod N] = KDSB[Counter \mod N] \newline - FF(KDSB[(Counter - 3) \mod N], L(KDSB[(Counter - 2) \mod N]), KDSB[(Counter - 1) \mod N], Counter, N)
-   \]
+   ```
 
 4. Further Mixing Using `L`, `L2` Functions and `MathMagicNumbers`:
-   \[
+   ```math 
    RandomIndex'' = RandomIndex' \newline \oplus L(KDSB[Counter \mod N] - MathMagicNumbers[Counter \mod 4])
-   \]
-   \[
+   ```
+   ```math 
    KDSB[(Counter + 1) \mod N] = KDSB[(Counter + 1) \mod N] \newline - L2(KDSB[Counter \mod N] + MathMagicNumbers[RandomIndex'' - Counter \mod 4])
-   \]
-   \[
+   ```
+   ```math 
    RandomIndex''' = RandomIndex'' \newline \oplus L2(KDSB[Counter \mod N] - MathMagicNumbers[RandomIndex'' + Counter \mod 4])
-   \]
-   \[
+   ```
+   ```math 
    KDSB[(Counter + 2) \mod N] = KDSB[(Counter + 2) \mod N] \newline + L(KDSB[(Counter + 1) \mod N] + MathMagicNumbers[RandomIndex''' - Counter \mod 4])
-   \]
+   ```
 
 The operations include bitwise XOR, modular addition, the GG, FF, L, and L2 functions, and feedback mechanisms.
 
@@ -990,7 +1010,9 @@ EndFunction
 ### 2.8.1 System Endianness Check
 
 **Function**:
-\[ \text{is\_system\_little\_endian}() \]
+```math
+\text{is\_system\_little\_endian}()
+```
 
 This function checks whether the system follows little-endian byte order. 
 In a little-endian system, the least significant byte is stored first.
@@ -1013,10 +1035,14 @@ This function is responsible for deriving subkeys from the provided key bytes, u
 
 **Mathematical Formulas**:
 For the byte order change operation:
-\[ \text{KeyBlock} = ( \text{ByteD} \ll 24 ) \oplus ( \text{ByteB} \ll 16 ) \oplus ( \text{ByteC} \ll 8 ) \oplus \text{ByteA} \]
+```math
+\text{KeyBlock} = ( \text{ByteD} \ll 24 ) \oplus ( \text{ByteB} \ll 16 ) \oplus ( \text{ByteC} \ll 8 ) \oplus \text{ByteA}
+```
 
 For the byte swap operation (in case of a big-endian system):
-\[ \text{KeyBlock} = ( ( \text{KeyBlock} \& 0x000000FF ) \ll 24 ) \oplus ( ( \text{KeyBlock} \& 0x0000FF00 ) \ll 8 ) \oplus ( ( \text{KeyBlock} \& 0x00FF0000 ) \gg 8 ) \oplus ( ( \text{KeyBlock} \& 0xFF000000 ) \gg 24 ) \]
+```math
+\text{KeyBlock} = ( ( \text{KeyBlock} \& 0x000000FF ) \ll 24 ) \oplus ( ( \text{KeyBlock} \& 0x0000FF00 ) \ll 8 ) \oplus ( ( \text{KeyBlock} \& 0x00FF0000 ) \gg 8 ) \oplus ( ( \text{KeyBlock} \& 0xFF000000 ) \gg 24 )
+```
 
 **Algorithm**:
 ```
@@ -1095,19 +1121,20 @@ EndFunction
 **Constructor** (`TitanWallStreamCipher`):
 Given a vector of bytes representing the key, it initializes the cipher by generating subkeys using the `KeySchedule` function. It also sets `IsKeyUsed` to true, indicating that a key has been set.
 
-\[
-\text{Constructor}(KeyBytes) = \begin{align*} 
+```math 
+\text{Constructor}(KeyBytes) = \\
+\begin{align*} 
 & \text{KeySchedule}(KeyBytes) \\
 & \text{IsKeyUsed} \leftarrow \text{true}
 \end{align*}
-\]
+```
 
 **Destructor** (`~TitanWallStreamCipher`):
 It resets the state of the cipher by calling the `ResetState` function.
 
-\[
+```math 
 \text{Destructor}() = \text{ResetState}()
-\]
+```
 
 **GeneratePseudoRandomBytes**:
 
@@ -1119,80 +1146,82 @@ The function aims to generate a sequence of pseudorandom bytes using initial sta
 
 Let's represent the arrays and values used in the function:
 
-Let \( B \) be the array `Bytes`.
-Let \( K \) be the array `KDSB`.
-Let \( S \) be the array `State`.
+Let $` B `$ be the array `Bytes`.
+Let $` K `$ be the array `KDSB`.
+Let $` S `$ be the array `State`.
 
-The size of \( K \) and \( S \) is 128, and each element is a 32-bit number.
+The size of $` K `$ and $` S `$ is 128, and each element is a 32-bit number.
 
-The function operates in rounds, and in each round, elements of \( K \) are transformed using elements of \( S \) and vice versa, followed by cryptographic mixing to generate pseudorandomness.
+The function operates in rounds, and in each round, elements of $` K `$ are transformed using elements of $` S `$ and vice versa, followed by cryptographic mixing to generate pseudorandomness.
 
 **Notation and Symbols**:
 
-- \(\oplus\): Represents the XOR operation.
-- \(\land\): Represents the bitwise AND operation.
-- \(+\): Represents modular addition operation.
+- $`\oplus`$: Represents the XOR operation.
+- $`\land`$: Represents the bitwise AND operation.
+- $`+`$: Represents modular addition operation.
 
 **3.3 Operations**:
 
 **a. Initial Checks:**
 
-If \( B \) is empty or `IsKeyUsed` is false:
+If $` B `$ is empty or `IsKeyUsed` is false:
 - Exit the function.
 
 **b. Pseudorandom Number Generation:**
 
-Initialize \( \text{RandomIndex} \) to 0.
+Initialize $` \text{RandomIndex} `$ to 0.
 
-For each \( i \) in range of \( K \):
+For each $` i `$ in range of $` K `$:
 
-- **Part A:** Update \( K[i] \) using current \( S \) values:
-	\[
+- **Part A:** Update $` K[i] `$ using current $` S `$ values:
+	```math 
 	K[i] = K[i] +_{\pmod{2^{32}}} (S[i] \land \text{0xFFFF0000})
-	\]
-	\[
+	```
+	```math 
 	K[i] = K[i] \oplus (S[i] \land \text{0x0000FFFF})
-	\]
-  These operations combine the left half of \( S[i] \) with the right half via modular addition and XOR respectively.
+	```
+  These operations combine the left half of $` S[i] `$ with the right half via modular addition and XOR respectively.
 
 - **Cryptographic Mixing:** This involves multiple rounds of cryptographic operations to generate pseudorandomness. These operations are `MixWithAddSubtract`, `RandomAccessMix`, and `ComplexMix`.
 
-- **Part B:** Update \( S[i] \) using the new \( K[i] \) values:
-	\[
+- **Part B:** Update $` S[i] `$ using the new $` K[i] `$ values:
+	```math 
 	S[i] = S[i] \oplus (K[i] \land \text{0xFFFF0000})
-	\]
-	\[
+	```
+	```math 
 	S[i] = S[i] +_{\pmod{2^{32}}} (K[i] \land \text{0x0000FFFF})
-	\]
-  Similar to Part A, these operations combine the left half of \( K[i] \) with the right half via XOR and modular addition respectively.
+	```
+  Similar to Part A, these operations combine the left half of $` K[i] `$ with the right half via XOR and modular addition respectively.
 
 **c. Filling Bytes Array:**
 
-For each \( i \) in range of \( S \):
+For each $` i `$ in range of $` S `$:
 
-- Extract 4 bytes from \( S[i] \) and store them in \( B \). This is done by repeatedly taking the least significant byte from \( S[i] \) and shifting \( S[i] \) to the right.
+- Extract 4 bytes from $` S[i] `$ and store them in $` B `$. This is done by repeatedly taking the least significant byte from $` S[i] `$ and shifting $` S[i] `$ to the right.
 
 
 **4. InitialState**:
 It resets the current state using `ResetState`, then initializes the cipher with a new key using `KeySchedule`, and sets `IsKeyUsed` to true.
 
-\[
-\text{InitialState}(KeyBytes) = \begin{align*} 
+```math 
+\text{InitialState}(KeyBytes) = \\
+\begin{align*} 
 & \text{ResetState}() \\
 & \text{KeySchedule}(KeyBytes) \\
 & \text{IsKeyUsed} \leftarrow \text{true}
 \end{align*}
-\]
+```
 
 **5. ResetState**:
 It resets the `State` and `KDSB` arrays to zero and sets `IsKeyUsed` to false.
 
-\[
-\text{ResetState}() = \begin{align*} 
+```math 
+\text{ResetState}() = \\
+\begin{align*} 
 & State, KDSB \leftarrow \text{Zero} \\
 & \text{IsKeyUsed} \leftarrow \text{false} \\
 & \end{align*}
-\]
+```
 
 **Algorithm**:
 
@@ -1289,25 +1318,25 @@ EndClass
 
 **Pseudo-Hadamard Transform (PHT) and Inverse PHT**:
 
-The Pseudo-Hadamard Transform (PHT) is a basic operation in block ciphers. Given two inputs \(a\) and \(b\), the PHT produces two outputs \(a'\) and \(b'\).
+The Pseudo-Hadamard Transform (PHT) is a basic operation in block ciphers. Given two inputs $`a`$ and $`b`$, the PHT produces two outputs $`a'`$ and $`b'`$.
 
-For \( PHT(a, b) \):
+For $` PHT(a, b) `$:
 
-\[
-a' = (a + b) \mod 2^{32}
-\]
-\[
+```math
+\begin{align*}
+a' = (a + b) \mod 2^{32} \\
 b' = (a + 2b) \mod 2^{32}
-\]
+\end{align*}
+```
 
-For \( InversePHT(a', b') \):
+For $` InversePHT(a', b') `$:
 
-\[
-a = (2a' - b') \mod 2^{32}
-\]
-\[
+```math
+\begin{align*}
+a = (2a' - b') \mod 2^{32} \\
 b = (b' - a') \mod 2^{32}
-\]
+\end{align*}
+```
 
 **4.2.1 Encryption**:
 
@@ -1315,101 +1344,85 @@ The encryption function transforms a plaintext block into a ciphertext block.
 It operates on 8 32-bit words of plaintext and uses several operations, including substitution, permutation, and the PHT. The encryption employs a series of rounds to mix the plaintext and produce the ciphertext.
 
 1. **Initialization**:
-Given an input plaintext block, we first split it into eight 32-bit words \( A, B, C, D, E, F, G, H \). The key scheduling values \( KDSB \) are used in various operations throughout the encryption process.
+Given an input plaintext block, we first split it into eight 32-bit words $` A, B, C, D, E, F, G, H `$. The key scheduling values $` KDSB `$ are used in various operations throughout the encryption process.
 
 2. **Addition with Key Values**:
-The values of \( B, D, F, \) and \( H \) are updated using:
-\[ 
-B = B + KDSB[0] 
-\]
-\[ 
-D = D + KDSB[1] 
-\]
-\[ 
-F = F + KDSB[2] 
-\]
-\[ 
-H = H + KDSB[3] 
-\]
+The values of $` B, D, F, `$ and $` H `$ are updated using:
+```math
+\begin{align*}
+B = B + KDSB[0] \\
+D = D + KDSB[1] \\
+F = F + KDSB[2] \\
+H = H + KDSB[3]
+\end{align*}
+```
 
 3. **Iterative Rounds**:
 For 62 rounds, we undergo a series of operations, as follows (from j=1 to j=62):
 
   - **Substitution**:
-  We perform a nonlinear transformation on \( B, D, F, \) and \( H \) using:
-  \[
-  t = B \oplus ((B \ll 1) + 1)
-  \]
-  \[
-  u = D \oplus ((D \ll 2) + 1)
-  \]
-  \[
-  v = F \oplus ((F \ll 3) + 1)
-  \]
-  \[
+  We perform a nonlinear transformation on $` B, D, F, `$ and $` H `$ using:
+  ```math
+  \begin{align*}
+  t = B \oplus ((B \ll 1) + 1) \\
+  u = D \oplus ((D \ll 2) + 1) \\
+  v = F \oplus ((F \ll 3) + 1) \\
   w = H \oplus ((H \ll 4) + 1)
-  \]
+  \end{align*}
+  ```
 
   - **Mixing with Rotational Operations**:
-  We update the values of \( A, C, E, \) and \( G \) using rotations:
-  \[
-  A = ( (A - t) \ggg (w \mod 32) ) + KDSB[2 \times j]
-  \]
-  \[
-  C = ( (C \oplus u) \ggg (v \mod 32) ) + KDSB[2 \times j + 1]
-  \]
-  \[
-  E = ( (E \oplus v) \ggg (u \mod 32) ) + KDSB[2 \times j + 2]
-  \]
-  \[
+  We update the values of $` A, C, E, `$ and $` G `$ using rotations:
+  ```math
+  \begin{align*}
+  A = ( (A - t) \ggg (w \mod 32) ) + KDSB[2 \times j] \\
+  C = ( (C \oplus u) \ggg (v \mod 32) ) + KDSB[2 \times j + 1] \\
+  E = ( (E \oplus v) \ggg (u \mod 32) ) + KDSB[2 \times j + 2] \\
   G = ( (G + w) \ggg (t \mod 32) ) + KDSB[2 \times j + 3]
-  \]
+  \end{align*}
+  ```
 
   - **Update Using KDSB**:
-  The values of \( B, D, F, \) and \( H \) are further modified using:
-  \[
-  B = B + KDSB[j \mod \text{size of KDSB}]
-  \]
-  \[
-  D = D \oplus KDSB[(j + 1) \mod \text{size of KDSB}]
-  \]
-  \[
-  F = F \oplus KDSB[(j + 2) \mod \text{size of KDSB}]
-  \]
-  \[
+  The values of $` B, D, F, `$ and $` H `$ are further modified using:
+  ```math
+  \begin{align*}
+  B = B + KDSB[j \mod \text{size of KDSB}] \\
+  D = D \oplus KDSB[(j + 1) \mod \text{size of KDSB}] \\
+  F = F \oplus KDSB[(j + 2) \mod \text{size of KDSB}] \\
   H = H - KDSB[(j + 3) \mod \text{size of KDSB}]
-  \]
+  \end{align*}
+  ```
 
   - **Permutation**:
-  The eight words are permuted in the order \( (F, D, B, H, A, G, E, C) = (A, B, C, D, E, F, G, H) \).
+  The eight words are permuted in the order $` (F, D, B, H, A, G, E, C) = (A, B, C, D, E, F, G, H) `$.
 
   - **Pseudo-Hadamard Transform (PHT)**:
   PHT operations are applied pairwise on the words:
-  \[
+  ```math
   \begin{align*}
   (A, B) & \rightarrow \text{PHT}(A, B) \\
   (C, D) & \rightarrow \text{PHT}(C, D) \\
   (E, F) & \rightarrow \text{PHT}(E, F) \\
   (G, H) & \rightarrow \text{PHT}(G, H) \\
   \end{align*}
-  \]
+  ```
 
 4. **Final Addition with Key Values**:
-\[ 
+```math  
 A = A + KDSB[\text{SubkeysSize} - 4] 
-\]
-\[ 
+```
+```math  
 C = C + KDSB[\text{SubkeysSize} - 3] 
-\]
-\[ 
+```
+```math  
 E = E + KDSB[\text{SubkeysSize} - 2] 
-\]
-\[ 
+```
+```math  
 G = G + KDSB[\text{SubkeysSize} - 1] 
-\]
+```
 
 5. **Output**:
-The resulting eight words \( A, B, C, D, E, F, G, H \) are the ciphertext.
+The resulting eight words $` A, B, C, D, E, F, G, H `$ are the ciphertext.
 
 **4.2.2 Decryption**:
 
@@ -1417,101 +1430,101 @@ The decryption function is the inverse of the encryption function.
 It transforms a ciphertext block back into its original plaintext form. It also uses the inverse operations of the encryption, including the inverse PHT.
 
 1. **Initialization**:
-Given an input ciphertext block, we first split it into eight 32-bit words \( A, B, C, D, E, F, G, H \). The key scheduling values \( KDSB \) are used in various operations throughout the decryption process.
+Given an input ciphertext block, we first split it into eight 32-bit words $` A, B, C, D, E, F, G, H `$. The key scheduling values $` KDSB `$ are used in various operations throughout the decryption process.
 
 2. **Subtraction with Key Values**:
-The values of \( A, C, E, \) and \( G \) are updated using:
-\[ 
+The values of $` A, C, E, `$ and $` G `$ are updated using:
+```math  
 A = A - KDSB[\text{SubkeysSize} - 4] 
-\]
-\[ 
+```
+```math  
 C = C - KDSB[\text{SubkeysSize} - 3] 
-\]
-\[ 
+```
+```math  
 E = E - KDSB[\text{SubkeysSize} - 2] 
-\]
-\[ 
+```
+```math  
 G = G - KDSB[\text{SubkeysSize} - 1] 
-\]
+```
 
 3. **Iterative Rounds**:
 For 62 rounds, we undergo a series of operations, as follows (from j=62 to j=1):
 
   - **Inverse Pseudo-Hadamard Transform**:
   InversePHT operations are applied pairwise on the words:
-  \[
+  ```math 
   \begin{align*}
   (A, B) & \rightarrow \text{InversePHT}(A, B) \\
   (C, D) & \rightarrow \text{InversePHT}(C, D) \\
   (E, F) & \rightarrow \text{InversePHT}(E, F) \\
   (G, H) & \rightarrow \text{InversePHT}(G, H) \\
   \end{align*}
-  \]
+  ```
 
   - **Inverse Permutation**:
-  The eight words are permuted back to the order \( (A, B, C, D, E, F, G, H) = (F, D, B, H, A, G, E, C) \).
+  The eight words are permuted back to the order $` (A, B, C, D, E, F, G, H) = (F, D, B, H, A, G, E, C) `$.
 
   - **Update Using KDSB**:
-  The values of \( B, D, F, \) and \( H \) are further modified using:
-  \[
+  The values of $` B, D, F, `$ and $` H `$ are further modified using:
+  ```math 
   H = H + KDSB[(j + 3) \mod \text{size of KDSB}]
-  \]
-  \[
+  ```
+  ```math 
   F = F \oplus KDSB[(j + 2) \mod \text{size of KDSB}]
-  \]
-  \[
+  ```
+  ```math 
   D = D \oplus KDSB[(j + 1) \mod \text{size of KDSB}]
-  \]
-  \[
+  ```
+  ```math 
   B = B - KDSB[j \mod \text{size of KDSB}]
-  \]
+  ```
 
   - **Inverse Substitution**:
-  We perform a nonlinear transformation on \( B, D, F, \) and \( H \) using:
-  \[
+  We perform a nonlinear transformation on $` B, D, F, `$ and $` H `$ using:
+  ```math 
   t = B \oplus ((B \ll 1) + 1)
-  \]
-  \[
+  ```
+  ```math 
   u = D \oplus ((D \ll 2) + 1)
-  \]
-  \[
+  ```
+  ```math 
   v = F \oplus ((F \ll 3) + 1)
-  \]
-  \[
+  ```
+  ```math 
   w = H \oplus ((H \ll 4) + 1)
-  \]
+  ```
 
   - **Mixing with Rotational Operations**:
-  We update the values of \( A, C, E, \) and \( G \) using inverse rotations:
-  \[
+  We update the values of $` A, C, E, `$ and $` G `$ using inverse rotations:
+  ```math 
   G = ( (G - KDSB[2 \times j + 3]) \lll (t \mod 32) ) - w
-  \]
-  \[
+  ```
+  ```math 
   E = ( (E - KDSB[2 \times j + 2]) \lll (u \mod 32) ) \oplus v
-  \]
-  \[
+  ```
+  ```math 
   C = ( (C - KDSB[2 \times j + 1]) \lll (v \mod 32) ) \oplus u
-  \]
-  \[
+  ```
+  ```math 
   A = ( (A - KDSB[2 \times j]) \lll (w \mod 32) ) + t
-  \]
+  ```
 
 4. **Final Subtraction with Key Values**:
-\[ 
+```math  
 H = H - KDSB[3] 
-\]
-\[ 
+```
+```math  
 F = F - KDSB[2] 
-\]
-\[ 
+```
+```math  
 D = D - KDSB[1] 
-\]
-\[ 
+```
+```math  
 B = B - KDSB[0] 
-\]
+```
 
 5. **Output**:
-The resulting eight words \( A, B, C, D, E, F, G, H \) are the plaintext.
+The resulting eight words $` A, B, C, D, E, F, G, H `$ are the plaintext.
 
 **4.3 Algorithm**:
 
@@ -1586,36 +1599,36 @@ Function Decrypt(ciphertext):
 ## **4. Data Testing and Verification**
 
 1. **Mean**:
-Given a set of observed changes \(X = \{x_1, x_2, \ldots, x_T\}\) over \(T\) trials:
-\[
+Given a set of observed changes $`X = \{x_1, x_2, \ldots, x_T\}`$ over $`T`$ trials:
+```math 
 \mu = \frac{1}{T} \sum_{t=1}^{T} x_t
-\]
+```
 
 2. **Variance**:
-Given the same set of observed changes and the computed mean \(\mu\):
-\[
+Given the same set of observed changes and the computed mean $`\mu`$:
+```math 
 \sigma^2 = \frac{1}{T} \sum_{t=1}^{T} (x_t - \mu)^2
-\]
+```
 
 3. **Differential Test**:
 For each trial, a bit is flipped in the input (either plaintext or key). 
 The change in the output (either ciphertext or guessed plaintext) is observed and measured using the Hamming distance.
 Now, let's define the Hamming distance:
-Given two binary strings \( a \) and \( b \) of equal length, the Hamming distance \( HD(a, b) \) is defined as the number of positions at which the corresponding bits are different.
-Mathematically, the Hamming distance between two strings \( a \) and \( b \) of length \( n \) can be defined as:
-\[
+Given two binary strings $` a `$ and $` b `$ of equal length, the Hamming distance $` HD(a, b) `$ is defined as the number of positions at which the corresponding bits are different.
+Mathematically, the Hamming distance between two strings $` a `$ and $` b `$ of length $` n `$ can be defined as:
+```math 
 HD(a, b) = \sum_{i=1}^{n} \delta(a_i, b_i)
-\]
+```
 Where:
-\[
+```math 
 \delta(x, y) = 
 \begin{cases} 
 1 & \text{if } x \neq y \\
 0 & \text{if } x = y 
 \end{cases}
-\]
+```
 
-Here, \( \delta \) is an indicator function that outputs 1 if the bits at the given position are different and 0 if they are the same.
+Here, $` \delta `$ is an indicator function that outputs 1 if the bits at the given position are different and 0 if they are the same.
 
 4. **General Approach**:
     - For each test, multiple trials are conducted.
@@ -1627,18 +1640,18 @@ Here, \( \delta \) is an indicator function that outputs 1 if the bits at the gi
 5. **Mathematical Formulation**:
 
 **Commonly recognized variable:**
-- \( T \) - number of trials
-- \( P \) - the original plaintext
-- \( P' \) - plaintext with one bit changed
-- \( K \) - the original key.
-- \( K' \) - key with one bit changed
-- \( C \) - the original ciphertext
-- \( C' \) - cipher text with one bit changed
+- $` T `$ - number of trials
+- $` P `$ - the original plaintext
+- $` P' `$ - plaintext with one bit changed
+- $` K `$ - the original key.
+- $` K' `$ - key with one bit changed
+- $` C `$ - the original ciphertext
+- $` C' `$ - cipher text with one bit changed
 
 **Commonly recognized functions:**
-- \( HD \) - Hamming distance
-- \( EF \) - Encryption function
-- \( DF \) - Decryption function
+- $` HD `$ - Hamming distance
+- $` EF `$ - Encryption function
+- $` DF `$ - Decryption function
 
 ---
 
@@ -1648,17 +1661,17 @@ This test evaluates how a change in one bit of the plaintext spreads to the enti
 
 **Formula:**
 
-\[
+```math 
 \mu_{ D_{PC} } = \frac{1}{T} \sum_{t=1}^{T} HD(EF(P, K), EF(P', K))
-\]
+```
 
-\[
+```math 
 \sigma^2_{PC} = \frac{1}{T} \sum_{t=1}^{T} (HD(EF(P, K), EF(P', K)) - \mu_{ D_{PC} })^2
-\]
+```
 
 **Where:**
-- \( \mu_{ D_{PC} } \) is the average diffusivity from plaintext to ciphertext.
-- \( \sigma^2_{PC} \) is the variance of diffusivity from plaintext to ciphertext.
+- $` \mu_{ D_{PC} } `$ is the average diffusivity from plaintext to ciphertext.
+- $` \sigma^2_{PC} `$ is the variance of diffusivity from plaintext to ciphertext.
 
 ---
 
@@ -1668,17 +1681,17 @@ This test evaluates how a change in one bit of the key confuses the entire ciphe
 
 **Formula:**
 
-\[
+```math 
 \mu_{ C_{KC} } = \frac{1}{T} \sum_{t=1}^{T} HD(EF(P, K), EF(P, K'))
-\]
+```
 
-\[
+```math 
 \sigma^2_{KC} = \frac{1}{T} \sum_{t=1}^{T} (HD(EF(P, K), EF(P, K')) - \mu_{ C_{KC} })^2
-\]
+```
 
 **Where:**
-- \( \mu_{ C_{KC} } \) is the average confusability from key to ciphertext.
-- \( \sigma^2_{KC} \) is the variance of confusability from key to ciphertext.
+- $` \mu_{ C_{KC} } `$ is the average confusability from key to ciphertext.
+- $` \sigma^2_{KC} `$ is the variance of confusability from key to ciphertext.
 
 ---
 
@@ -1688,17 +1701,17 @@ This test evaluates how a change in one bit of the ciphertext spreads to the ent
 
 **Formula:**
 
-\[
+```math 
 \mu_{ D_{CP} } = \frac{1}{T} \sum_{t=1}^{T} HD(DF(C, K), DF(C', K))
-\]
+```
 
-\[
+```math 
 \sigma^2_{CP} = \frac{1}{T} \sum_{t=1}^{T} (HD(DF(C, K), DF(C', K)) - \mu{ D_{CP} })^2
-\]
+```
 
 **Where:**
-- \( \mu_{ D_{CP} } \) is the average diffusivity from ciphertext to plaintext.
-- \( \sigma^2_{CP} \) is the variance of diffusivity from ciphertext to plaintext.
+- $` \mu_{ D_{CP} } `$ is the average diffusivity from ciphertext to plaintext.
+- $` \sigma^2_{CP} `$ is the variance of diffusivity from ciphertext to plaintext.
 
 ---
 
@@ -1708,17 +1721,17 @@ This test evaluates how a change in one bit of the key confuses the entire plain
 
 **Formula:**
 
-\[
+```math 
 \mu_{ C_{KP} } = \frac{1}{T} \sum_{t=1}^{T} HD(DF(C, K), DF(C, K'))
-\]
+```
 
-\[
+```math 
 \sigma^2_{KP} = \frac{1}{T} \sum_{t=1}^{T} (HD(DF(C, K), DF(C, K')) - \mu{ C_{KP} })^2
-\]
+```
 
 **Where:**
-- \( \mu_{ C_{KP} } \) is the average confusability from key to plaintext.
-- \( \sigma^2_{KP} \) is the variance of confusability from key to plaintext.
+- $` \mu_{ C_{KP} } `$ is the average confusability from key to plaintext.
+- $` \sigma^2_{KP} `$ is the variance of confusability from key to plaintext.
 
 ---
 
