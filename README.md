@@ -19,13 +19,15 @@ Given two polynomials $` a(x) `$ and $` b(x) `$ in $` GF(2^8) `$, their product 
 ```math
 c(x) = a(x) \times b(x)
 ```
+
 To ensure the result remains within $` GF(2^8) `$, we use:
 ```math
-c'(x) = c(x) \mod m(x)
+c'(x) = c(x) \textbf{ mod } m(x)
 ```
+
 And, since we're in $` GF(2) `$, coefficients are either 0 or 1:
 ```math
-c''(x) = c'(x) \mod 2
+c''(x) = c'(x) \textbf{ mod } 2
 ```
 
 **Multiplicative Inverse in $` GF(2^8) `$**:
@@ -776,12 +778,12 @@ Where $` KDSB[number] = KDSB_{index} `$
 
 Left Rotation:
 ```math 
-\text{{Bits32RotateLeft}}(number, bit) = (number \ll (bit \mod 32)) \lor (number \gg (32 - (bit \mod 32)))
+\text{{Bits32RotateLeft}}(number, bit) = (number \ll (bit \textbf{ mod } 32)) \lor (number \gg (32 - (bit \textbf{ mod } 32)))
 ```
 
 Right Rotation:
 ```math 
-\text{{Bits32RotateRight}}(number, bit) = (number \gg (bit \mod 32)) \lor (number \ll (32 - (bit \mod 32)))
+\text{{Bits32RotateRight}}(number, bit) = (number \gg (bit \textbf{ mod } 32)) \lor (number \ll (32 - (bit \textbf{ mod } 32)))
 ```
 
 Where $`\ll`$ denotes left bitwise shift, $`\gg`$ denotes right bitwise shift, $`\lll`$ denotes left bitwise rotate, $`\ggg`$ denotes right bitwise rotate, and $`\lor`$ denotes bitwise OR.
@@ -882,16 +884,16 @@ EndFunction
 
 **Mathematical Formulas**:
 ```math 
-\text{RandomIndex} = \text{RandomIndex} \newline \oplus \left( \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] + \text{MathMagicNumbers}[\text{Counter} \mod 4] \right)
+\text{RandomIndex} = \text{RandomIndex} \newline \oplus \left( \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] + \text{MathMagicNumbers}[\text{Counter} \textbf{ mod } 4] \right)
 ```
 ```math 
-\text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \newline + \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \\ - \text{MathMagicNumbers}[(\text{RandomIndex} + \text{Counter}) \mod 4]
+\text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \newline + \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \\ - \text{MathMagicNumbers}[(\text{RandomIndex} + \text{Counter}) \textbf{ mod } 4]
 ```
 ```math 
 \text{RandomIndex} = \text{RandomIndex} \newline \oplus \left( \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \newline + \text{MathMagicNumbers}[(\text{RandomIndex} - \text{Counter}) \pmod{4}] \right)
 ```
 ```math 
-\text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] = \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \newline - \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \\ + \text{MathMagicNumbers}[(\text{RandomIndex} + \text{Counter}) \mod 4]
+\text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] = \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \newline - \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \\ + \text{MathMagicNumbers}[(\text{RandomIndex} + \text{Counter}) \textbf{ mod } 4]
 ```
 
 **Algorithm**:
@@ -914,7 +916,7 @@ EndFunction
 \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \oplus \text{KDSB}[\text{{RandomPosition}}]
 ```
 ```math 
-\text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \newline + \left( \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] - \text{MathMagicNumbers}[\text{{RandomPosition}} \mod 4] \right)
+\text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \newline + \left( \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] - \text{MathMagicNumbers}[\text{{RandomPosition}} \textbf{ mod } 4] \right)
 ```
 
 **Algorithm**:
@@ -951,30 +953,30 @@ EndFunction
 
 2. Updating `KDSB` using Previous Entries:
    ```math 
-   KDSB[Counter \mod N] = KDSB[Counter \mod N] \newline \oplus KDSB[(Counter - 2) \mod N] \oplus KDSB[(Counter - 1) \mod N]
+   KDSB[Counter \textbf{ mod } N] = KDSB[Counter \textbf{ mod } N] \newline \oplus KDSB[(Counter - 2) \textbf{ mod } N] \oplus KDSB[(Counter - 1) \textbf{ mod } N]
    ```
    where $` N `$ is the size of `KDSB`.
 
 3. Applying the Nonlinear Boolean Functions and Linear Transformation:
    ```math 
-   KDSB[Counter \mod N] = KDSB[Counter \mod N] \newline + GG(Counter, KDSB[(Counter - 1) \mod N], RandomIndex' \mod 2^{32}, Counter, N)
+   KDSB[Counter \textbf{ mod } N] = KDSB[Counter \textbf{ mod } N] \newline + GG(Counter, KDSB[(Counter - 1) \textbf{ mod } N], RandomIndex' \textbf{ mod } 2^{32}, Counter, N)
    ```
    ```math 
-   KDSB[Counter \mod N] = KDSB[Counter \mod N] \newline - FF(KDSB[(Counter - 3) \mod N], L(KDSB[(Counter - 2) \mod N]), KDSB[(Counter - 1) \mod N], Counter, N)
+   KDSB[Counter \textbf{ mod } N] = KDSB[Counter \textbf{ mod } N] \newline - FF(KDSB[(Counter - 3) \textbf{ mod } N], L(KDSB[(Counter - 2) \textbf{ mod } N]), KDSB[(Counter - 1) \textbf{ mod } N], Counter, N)
    ```
 
 4. Further Mixing Using `L`, `L2` Functions and `MathMagicNumbers`:
    ```math 
-   RandomIndex'' = RandomIndex' \newline \oplus L(KDSB[Counter \mod N] - MathMagicNumbers[Counter \mod 4])
+   RandomIndex'' = RandomIndex' \newline \oplus L(KDSB[Counter \textbf{ mod } N] - MathMagicNumbers[Counter \textbf{ mod } 4])
    ```
    ```math 
-   KDSB[(Counter + 1) \mod N] = KDSB[(Counter + 1) \mod N] \newline - L2(KDSB[Counter \mod N] + MathMagicNumbers[RandomIndex'' - Counter \mod 4])
+   KDSB[(Counter + 1) \textbf{ mod } N] = KDSB[(Counter + 1) \textbf{ mod } N] \newline - L2(KDSB[Counter \textbf{ mod } N] + MathMagicNumbers[RandomIndex'' - Counter \textbf{ mod } 4])
    ```
    ```math 
-   RandomIndex''' = RandomIndex'' \newline \oplus L2(KDSB[Counter \mod N] - MathMagicNumbers[RandomIndex'' + Counter \mod 4])
+   RandomIndex''' = RandomIndex'' \newline \oplus L2(KDSB[Counter \textbf{ mod } N] - MathMagicNumbers[RandomIndex'' + Counter \textbf{ mod } 4])
    ```
    ```math 
-   KDSB[(Counter + 2) \mod N] = KDSB[(Counter + 2) \mod N] \newline + L(KDSB[(Counter + 1) \mod N] + MathMagicNumbers[RandomIndex''' - Counter \mod 4])
+   KDSB[(Counter + 2) \textbf{ mod } N] = KDSB[(Counter + 2) \textbf{ mod } N] \newline + L(KDSB[(Counter + 1) \textbf{ mod } N] + MathMagicNumbers[RandomIndex''' - Counter \textbf{ mod } 4])
    ```
 
 The operations include bitwise XOR, modular addition, the GG, FF, L, and L2 functions, and feedback mechanisms.
@@ -1324,8 +1326,8 @@ For $` PHT(a, b) `$:
 
 ```math
 \begin{align*}
-a' = (a + b) \mod 2^{32} \\
-b' = (a + 2b) \mod 2^{32}
+a' = (a + b) \textbf{ mod } 2^{32} \\
+b' = (a + 2b) \textbf{ mod } 2^{32}
 \end{align*}
 ```
 
@@ -1333,8 +1335,8 @@ For $` InversePHT(a', b') `$:
 
 ```math
 \begin{align*}
-a = (2a' - b') \mod 2^{32} \\
-b = (b' - a') \mod 2^{32}
+a = (2a' - b') \textbf{ mod } 2^{32} \\
+b = (b' - a') \textbf{ mod } 2^{32}
 \end{align*}
 ```
 
@@ -1375,10 +1377,10 @@ For 62 rounds, we undergo a series of operations, as follows (from j=1 to j=62):
   We update the values of $` A, C, E, `$ and $` G `$ using rotations:
   ```math
   \begin{align*}
-  A = ( (A - t) \ggg (w \mod 32) ) + KDSB[2 \times j] \\
-  C = ( (C \oplus u) \ggg (v \mod 32) ) + KDSB[2 \times j + 1] \\
-  E = ( (E \oplus v) \ggg (u \mod 32) ) + KDSB[2 \times j + 2] \\
-  G = ( (G + w) \ggg (t \mod 32) ) + KDSB[2 \times j + 3]
+  A = ( (A - t) \ggg (w \textbf{ mod } 32) ) + KDSB[2 \times j] \\
+  C = ( (C \oplus u) \ggg (v \textbf{ mod } 32) ) + KDSB[2 \times j + 1] \\
+  E = ( (E \oplus v) \ggg (u \textbf{ mod } 32) ) + KDSB[2 \times j + 2] \\
+  G = ( (G + w) \ggg (t \textbf{ mod } 32) ) + KDSB[2 \times j + 3]
   \end{align*}
   ```
 
@@ -1386,10 +1388,10 @@ For 62 rounds, we undergo a series of operations, as follows (from j=1 to j=62):
   The values of $` B, D, F, `$ and $` H `$ are further modified using:
   ```math
   \begin{align*}
-  B = B + KDSB[j \mod \text{size of KDSB}] \\
-  D = D \oplus KDSB[(j + 1) \mod \text{size of KDSB}] \\
-  F = F \oplus KDSB[(j + 2) \mod \text{size of KDSB}] \\
-  H = H - KDSB[(j + 3) \mod \text{size of KDSB}]
+  B = B + KDSB[j \textbf{ mod } \text{size of KDSB}] \\
+  D = D \oplus KDSB[(j + 1) \textbf{ mod } \text{size of KDSB}] \\
+  F = F \oplus KDSB[(j + 2) \textbf{ mod } \text{size of KDSB}] \\
+  H = H - KDSB[(j + 3) \textbf{ mod } \text{size of KDSB}]
   \end{align*}
   ```
 
@@ -1467,16 +1469,16 @@ For 62 rounds, we undergo a series of operations, as follows (from j=62 to j=1):
   - **Update Using KDSB**:
   The values of $` B, D, F, `$ and $` H `$ are further modified using:
   ```math 
-  H = H + KDSB[(j + 3) \mod \text{size of KDSB}]
+  H = H + KDSB[(j + 3) \textbf{ mod } \text{size of KDSB}]
   ```
   ```math 
-  F = F \oplus KDSB[(j + 2) \mod \text{size of KDSB}]
+  F = F \oplus KDSB[(j + 2) \textbf{ mod } \text{size of KDSB}]
   ```
   ```math 
-  D = D \oplus KDSB[(j + 1) \mod \text{size of KDSB}]
+  D = D \oplus KDSB[(j + 1) \textbf{ mod } \text{size of KDSB}]
   ```
   ```math 
-  B = B - KDSB[j \mod \text{size of KDSB}]
+  B = B - KDSB[j \textbf{ mod } \text{size of KDSB}]
   ```
 
   - **Inverse Substitution**:
@@ -1497,16 +1499,16 @@ For 62 rounds, we undergo a series of operations, as follows (from j=62 to j=1):
   - **Mixing with Rotational Operations**:
   We update the values of $` A, C, E, `$ and $` G `$ using inverse rotations:
   ```math 
-  G = ( (G - KDSB[2 \times j + 3]) \lll (t \mod 32) ) - w
+  G = ( (G - KDSB[2 \times j + 3]) \lll (t \textbf{ mod } 32) ) - w
   ```
   ```math 
-  E = ( (E - KDSB[2 \times j + 2]) \lll (u \mod 32) ) \oplus v
+  E = ( (E - KDSB[2 \times j + 2]) \lll (u \textbf{ mod } 32) ) \oplus v
   ```
   ```math 
-  C = ( (C - KDSB[2 \times j + 1]) \lll (v \mod 32) ) \oplus u
+  C = ( (C - KDSB[2 \times j + 1]) \lll (v \textbf{ mod } 32) ) \oplus u
   ```
   ```math 
-  A = ( (A - KDSB[2 \times j]) \lll (w \mod 32) ) + t
+  A = ( (A - KDSB[2 \times j]) \lll (w \textbf{ mod } 32) ) + t
   ```
 
 4. **Final Subtraction with Key Values**:
