@@ -139,12 +139,12 @@ TransformationMatrix_{backward} =
 **Algebraic Formulation**
 For the forward Substitution-box:
 ```math
-\text{Substitution-box}[byte] = byte\left(TransformationMatrix_{backward} \times binaryvector( byte^{-1}_{\pmod{m(x)}} ) \oplus ByteForwardFixed \right)
+\text{Substitution-box}[byte] = byte\left(TransformationMatrix_{backward} \times binaryvector( byte^{-1}_{\textbf{ (mod) }{m(x)}} ) \oplus ByteForwardFixed \right)
 ```
 
 For the backward Substitution-box:
 ```math
-\text{Substitution-box}^{-1}[byte] = byte\left((TransformationMatrix_{forward} \times binaryvector(byte) \oplus ByteBackwardFixed )^{-1}_{\pmod{m(x)}}\right)
+\text{Substitution-box}^{-1}[byte] = byte\left((TransformationMatrix_{forward} \times binaryvector(byte) \oplus ByteBackwardFixed )^{-1}_{\textbf{ (mod) }{m(x)}}\right)
 ```
 
 ByteForwardFixed: `0xE2`
@@ -153,14 +153,14 @@ ByteBackwardFixed: `0xB8`
 The forward fixed polynomial byte value and the reverse fixed polynomial byte value should satisfy the following relationship:
 
 ```math
-TransformationMatrix_{forward} \times_{\pmod{m(x)}} ByteForwardFixed = ByteBackwardFixed
+TransformationMatrix_{forward} \times_{\textbf{ (mod) }{m(x)}} ByteForwardFixed = ByteBackwardFixed
 ```
 ```math
-TransformationMatrix_{backward} \times_{\pmod{m(x)}} ByteBackwardFixed = ByteForwardFixed
+TransformationMatrix_{backward} \times_{\textbf{ (mod) }{m(x)}} ByteBackwardFixed = ByteForwardFixed
 ```
 
 Where:
-- $` byte^{-1}_{\pmod{m(x)}} `$ is the multiplicative inverse of $`byte`$ in $`GF(2^8)`$ with respect to $`m(x)`$.
+- $` byte^{-1}_{\textbf{ (mod) }{m(x)}} `$ is the multiplicative inverse of $`byte`$ in $`GF(2^8)`$ with respect to $`m(x)`$.
 - $` TransformationMatrix_{forward} `$ is the transformation matrix constructed from $`poly_{forward}(x)`$.
 - $` TransformationMatrix_{backward} `$ is the transformation matrix constructed from $`poly_{backward}(x)`$.
 
@@ -576,11 +576,11 @@ TransformationMatrix =
 **Algebraic Formulation**
 For Substitution Box B:
 ```math
-\text{S-box}[byte] = byte\left(TransformationMatrix \times binaryvector( byte^{-1}_{\pmod{m(x)}} ) \oplus ByteFixed \right)
+\text{S-box}[byte] = byte\left(TransformationMatrix \times binaryvector( byte^{-1}_{\textbf{ (mod) }{m(x)}} ) \oplus ByteFixed \right)
 ```
 
 Where:
-- $` byte^{-1}_{\pmod{m(x)}} `$ is the multiplicative inverse of $`byte`$ in $`GF(2^8)`$ with respect to $`m(x)`$.
+- $` byte^{-1}_{\textbf{ (mod) }{m(x)}} `$ is the multiplicative inverse of $`byte`$ in $`GF(2^8)`$ with respect to $`m(x)`$.
 - $` TransformationMatrix `$ is the matrix used for the affine transformation.
 - $` \oplus `$ represents the bitwise XOR operation.
 
@@ -884,16 +884,16 @@ EndFunction
 
 **Mathematical Formulas**:
 ```math 
-\text{RandomIndex} = \text{RandomIndex} \newline \oplus \left( \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] + \text{MathMagicNumbers}[\text{Counter} \textbf{ mod } 4] \right)
+\text{RandomIndex} = \text{RandomIndex} \newline \oplus \left( \text{KDSB}[\text{Counter} \textbf{ (mod) }{\text{KDSB.size()}}] + \text{MathMagicNumbers}[\text{Counter} \textbf{ mod } 4] \right)
 ```
 ```math 
-\text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \newline + \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \\ - \text{MathMagicNumbers}[(\text{RandomIndex} + \text{Counter}) \textbf{ mod } 4]
+\text{KDSB}[\text{Counter} \textbf{ (mod) }{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \textbf{ (mod) }{\text{KDSB.size()}}] \newline + \text{KDSB}[(\text{Counter} + 1) \textbf{ (mod) }{\text{KDSB.size()}}] \\ - \text{MathMagicNumbers}[(\text{RandomIndex} + \text{Counter}) \textbf{ mod } 4]
 ```
 ```math 
-\text{RandomIndex} = \text{RandomIndex} \newline \oplus \left( \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \newline + \text{MathMagicNumbers}[(\text{RandomIndex} - \text{Counter}) \pmod{4}] \right)
+\text{RandomIndex} = \text{RandomIndex} \newline \oplus \left( \text{KDSB}[(\text{Counter} + 1) \textbf{ (mod) }{\text{KDSB.size()}}] \newline + \text{MathMagicNumbers}[(\text{RandomIndex} - \text{Counter}) \textbf{ (mod) }{4}] \right)
 ```
 ```math 
-\text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] = \text{KDSB}[(\text{Counter} + 1) \pmod{\text{KDSB.size()}}] \newline - \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \\ + \text{MathMagicNumbers}[(\text{RandomIndex} + \text{Counter}) \textbf{ mod } 4]
+\text{KDSB}[(\text{Counter} + 1) \textbf{ (mod) }{\text{KDSB.size()}}] = \text{KDSB}[(\text{Counter} + 1) \textbf{ (mod) }{\text{KDSB.size()}}] \newline - \text{KDSB}[\text{Counter} \textbf{ (mod) }{\text{KDSB.size()}}] \\ + \text{MathMagicNumbers}[(\text{RandomIndex} + \text{Counter}) \textbf{ mod } 4]
 ```
 
 **Algorithm**:
@@ -910,13 +910,13 @@ EndFunction
 
 **Mathematical Formulas**:
 ```math 
-\text{{RandomPosition}} = \text{RandomIndex} \pmod{\text{KDSB.size()}}
+\text{{RandomPosition}} = \text{RandomIndex} \textbf{ (mod) }{\text{KDSB.size()}}
 ```
 ```math 
-\text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \oplus \text{KDSB}[\text{{RandomPosition}}]
+\text{KDSB}[\text{Counter} \textbf{ (mod) }{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \textbf{ (mod) }{\text{KDSB.size()}}] \oplus \text{KDSB}[\text{{RandomPosition}}]
 ```
 ```math 
-\text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] \newline + \left( \text{KDSB}[\text{Counter} \pmod{\text{KDSB.size()}}] - \text{MathMagicNumbers}[\text{{RandomPosition}} \textbf{ mod } 4] \right)
+\text{KDSB}[\text{Counter} \textbf{ (mod) }{\text{KDSB.size()}}] = \text{KDSB}[\text{Counter} \textbf{ (mod) }{\text{KDSB.size()}}] \newline + \left( \text{KDSB}[\text{Counter} \textbf{ (mod) }{\text{KDSB.size()}}] - \text{MathMagicNumbers}[\text{{RandomPosition}} \textbf{ mod } 4] \right)
 ```
 
 **Algorithm**:
@@ -1177,7 +1177,7 @@ For each $` i `$ in range of $` K `$:
 
 - **Part A:** Update $` K[i] `$ using current $` S `$ values:
 	```math 
-	K[i] = K[i] +_{\pmod{2^{32}}} (S[i] \land \text{0xFFFF0000})
+	K[i] = K[i] +_{\textbf{ (mod) }{2^{32}}} (S[i] \land \text{0xFFFF0000})
 	```
 	```math 
 	K[i] = K[i] \oplus (S[i] \land \text{0x0000FFFF})
@@ -1191,7 +1191,7 @@ For each $` i `$ in range of $` K `$:
 	S[i] = S[i] \oplus (K[i] \land \text{0xFFFF0000})
 	```
 	```math 
-	S[i] = S[i] +_{\pmod{2^{32}}} (K[i] \land \text{0x0000FFFF})
+	S[i] = S[i] +_{\textbf{ (mod) }{2^{32}}} (K[i] \land \text{0x0000FFFF})
 	```
   Similar to Part A, these operations combine the left half of $` K[i] `$ with the right half via XOR and modular addition respectively.
 
