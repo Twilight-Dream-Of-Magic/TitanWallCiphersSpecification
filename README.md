@@ -931,53 +931,54 @@ EndFunction
 ### 2.7 ComplexMix
 
 **Mathematical Formulas**:
-1. Splitting and Processing `RandomIndex`:
-   Let $` RL `$ and $` RR `$ be the left and right 32 bits of `RandomIndex` respectively.
-   ```math 
-   RL = 32Bit(RandomIndex \gg 32)
-   ```
-   ```math 
-   RR = 32Bit(RandomIndex \land 0x00000000FFFFFFFF)
-   ```
-   Apply the NLFSR transformation:
-   ```math 
-   RL' = \text{{NLFSR}}(RL)
-   ```
-   ```math 
-   RR' = \text{{NLFSR}}(RR)
-   ```
-   Combine $` RL' `$ and $` RR' `$ to form the new `RandomIndex`:
-   ```math 
-   RandomIndex' = (64Bit(RR') \ll 32) \lor 64Bit(RL')
-   ```
 
-2. Updating `KDSB` using Previous Entries:
-   ```math 
-   KDSB[Counter \textbf{ mod } N] = KDSB[Counter \textbf{ mod } N] \newline \oplus KDSB[(Counter - 2) \textbf{ mod } N] \oplus KDSB[(Counter - 1) \textbf{ mod } N]
-   ```
-   where $` N `$ is the size of `KDSB`.
+> 1. Splitting and Processing `RandomIndex`:
+Let $` RL `$ and $` RR `$ be the left and right 32 bits of `RandomIndex` respectively.
+```math 
+RL = 32Bit(RandomIndex \gg 32)
+```
+```math 
+RR = 32Bit(RandomIndex \land 0x00000000FFFFFFFF)
+```
+Apply the NLFSR transformation:
+```math 
+RL' = \text{{NLFSR}}(RL)
+```
+```math 
+RR' = \text{{NLFSR}}(RR)
+```
+Combine $` RL' `$ and $` RR' `$ to form the new `RandomIndex`:
+```math 
+RandomIndex' = (64Bit(RR') \ll 32) \lor 64Bit(RL')
+```
 
-3. Applying the Nonlinear Boolean Functions and Linear Transformation:
-   ```math 
-   KDSB[Counter \textbf{ mod } N] = KDSB[Counter \textbf{ mod } N] \newline + GG(Counter, KDSB[(Counter - 1) \textbf{ mod } N], RandomIndex' \textbf{ mod } 2^{32}, Counter, N)
-   ```
-   ```math 
-   KDSB[Counter \textbf{ mod } N] = KDSB[Counter \textbf{ mod } N] \newline - FF(KDSB[(Counter - 3) \textbf{ mod } N], L(KDSB[(Counter - 2) \textbf{ mod } N]), KDSB[(Counter - 1) \textbf{ mod } N], Counter, N)
-   ```
+> 2. Updating `KDSB` using Previous Entries:
+```math 
+KDSB[Counter \textbf{ mod } N] = KDSB[Counter \textbf{ mod } N] \newline \oplus KDSB[(Counter - 2) \textbf{ mod } N] \oplus KDSB[(Counter - 1) \textbf{ mod } N]
+```
+where $` N `$ is the size of `KDSB`.
 
-4. Further Mixing Using `L`, `L2` Functions and `MathMagicNumbers`:
-   ```math 
-   RandomIndex'' = RandomIndex' \newline \oplus L(KDSB[Counter \textbf{ mod } N] - MathMagicNumbers[Counter \textbf{ mod } 4])
-   ```
-   ```math 
-   KDSB[(Counter + 1) \textbf{ mod } N] = KDSB[(Counter + 1) \textbf{ mod } N] \newline - L2(KDSB[Counter \textbf{ mod } N] + MathMagicNumbers[RandomIndex'' - Counter \textbf{ mod } 4])
-   ```
-   ```math 
-   RandomIndex''' = RandomIndex'' \newline \oplus L2(KDSB[Counter \textbf{ mod } N] - MathMagicNumbers[RandomIndex'' + Counter \textbf{ mod } 4])
-   ```
-   ```math 
-   KDSB[(Counter + 2) \textbf{ mod } N] = KDSB[(Counter + 2) \textbf{ mod } N] \newline + L(KDSB[(Counter + 1) \textbf{ mod } N] + MathMagicNumbers[RandomIndex''' - Counter \textbf{ mod } 4])
-   ```
+> 3. Applying the Nonlinear Boolean Functions and Linear Transformation:
+```math 
+KDSB[Counter \textbf{ mod } N] = KDSB[Counter \textbf{ mod } N] \newline + GG(Counter, KDSB[(Counter - 1) \textbf{ mod } N], RandomIndex' \textbf{ mod } 2^{32}, Counter, N)
+```
+```math 
+KDSB[Counter \textbf{ mod } N] = KDSB[Counter \textbf{ mod } N] \newline - FF(KDSB[(Counter - 3) \textbf{ mod } N], L(KDSB[(Counter - 2) \textbf{ mod } N]), KDSB[(Counter - 1) \textbf{ mod } N], Counter, N)
+```
+
+> 4. Further Mixing Using `L`, `L2` Functions and `MathMagicNumbers`:
+```math 
+RandomIndex'' = RandomIndex' \newline \oplus L(KDSB[Counter \textbf{ mod } N] - MathMagicNumbers[Counter \textbf{ mod } 4])
+```
+```math 
+KDSB[(Counter + 1) \textbf{ mod } N] = KDSB[(Counter + 1) \textbf{ mod } N] \newline - L2(KDSB[Counter \textbf{ mod } N] + MathMagicNumbers[RandomIndex'' - Counter \textbf{ mod } 4])
+```
+```math 
+RandomIndex''' = RandomIndex'' \newline \oplus L2(KDSB[Counter \textbf{ mod } N] - MathMagicNumbers[RandomIndex'' + Counter \textbf{ mod } 4])
+```
+```math 
+KDSB[(Counter + 2) \textbf{ mod } N] = KDSB[(Counter + 2) \textbf{ mod } N] \newline + L(KDSB[(Counter + 1) \textbf{ mod } N] + MathMagicNumbers[RandomIndex''' - Counter \textbf{ mod } 4])
+```
 
 The operations include bitwise XOR, modular addition, the GG, FF, L, and L2 functions, and feedback mechanisms.
 
@@ -1175,25 +1176,25 @@ Initialize $` \text{RandomIndex} `$ to 0.
 
 For each $` i `$ in range of $` K `$:
 
-- **Part A:** Update $` K[i] `$ using current $` S `$ values:
-	```math 
-	K[i] = K[i] +_{\textbf{ (mod) }{2^{32}}} (S[i] \land \text{0xFFFF0000})
-	```
-	```math 
-	K[i] = K[i] \oplus (S[i] \land \text{0x0000FFFF})
-	```
-  These operations combine the left half of $` S[i] `$ with the right half via modular addition and XOR respectively.
+> **Part A:** Update $` K[i] `$ using current $` S `$ values:
+```math 
+K[i] = K[i] +_{\textbf{ (mod) }{2^{32}}} (S[i] \land \text{0xFFFF0000})
+```
+```math 
+K[i] = K[i] \oplus (S[i] \land \text{0x0000FFFF})
+```
+These operations combine the left half of $` S[i] `$ with the right half via modular addition and XOR respectively.
 
-- **Cryptographic Mixing:** This involves multiple rounds of cryptographic operations to generate pseudorandomness. These operations are `MixWithAddSubtract`, `RandomAccessMix`, and `ComplexMix`.
+> **Cryptographic Mixing:** This involves multiple rounds of cryptographic operations to generate pseudorandomness. These operations are `MixWithAddSubtract`, `RandomAccessMix`, and `ComplexMix`.
 
-- **Part B:** Update $` S[i] `$ using the new $` K[i] `$ values:
-	```math 
-	S[i] = S[i] \oplus (K[i] \land \text{0xFFFF0000})
-	```
-	```math 
-	S[i] = S[i] +_{\textbf{ (mod) }{2^{32}}} (K[i] \land \text{0x0000FFFF})
-	```
-  Similar to Part A, these operations combine the left half of $` K[i] `$ with the right half via XOR and modular addition respectively.
+> **Part B:** Update $` S[i] `$ using the new $` K[i] `$ values:
+```math 
+S[i] = S[i] \oplus (K[i] \land \text{0xFFFF0000})
+```
+```math 
+S[i] = S[i] +_{\textbf{ (mod) }{2^{32}}} (K[i] \land \text{0x0000FFFF})
+```
+Similar to Part A, these operations combine the left half of $` K[i] `$ with the right half via XOR and modular addition respectively.
 
 **c. Filling Bytes Array:**
 
